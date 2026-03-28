@@ -1,0 +1,53 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kit Builder</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<h2>Собираем комплект...</h2>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) tg.expand();
+
+async function addToCart(id) {
+    return fetch("https://gate.21vek.by/cart/carts/items", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: Number(id),
+            type: "product",
+            count: 1
+        })
+    });
+}
+
+function getIds() {
+    const params = new URLSearchParams(window.location.search);
+    const ids = params.get("ids");
+    if (!ids) return [];
+    return ids.split(",");
+}
+
+async function buildCart() {
+    const ids = getIds();
+
+    for (let id of ids) {
+        await addToCart(id);
+        await new Promise(r => setTimeout(r, 800));
+    }
+
+    window.location.href = "https://www.21vek.by/order/";
+}
+
+buildCart();
+</script>
+
+</body>
+</html>
