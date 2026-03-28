@@ -6,11 +6,7 @@
 </head>
 <body>
 
-<h2>Комплект готов</h2>
-
-<button onclick="buildCart()" style="font-size:20px;padding:15px;">
-Добавить комплект в корзину
-</button>
+<h2>Собираем комплект...</h2>
 
 <script>
 function getIds() {
@@ -20,32 +16,35 @@ function getIds() {
     return ids.split(",");
 }
 
-async function addToCart(id) {
-    return fetch("https://gate.21vek.by/cart/carts/items", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            id: Number(id),
-            type: "product",
-            count: 1
-        })
-    });
+function buildScript(ids){
+    return `
+    (async()=>{
+        const ids = "${ids}".split(",");
+        for(let id of ids){
+            await fetch("https://gate.21vek.by/cart/carts/items", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: Number(id),
+                    type: "product",
+                    count: 1
+                })
+            });
+            await new Promise(r => setTimeout(r, 500));
+        }
+        window.location.href = "https://www.21vek.by/order/";
+    })();
+    `;
 }
 
-async function buildCart() {
-    const ids = getIds();
+const ids = getIds().join(",");
 
-    for (let id of ids) {
-        await addToCart(id);
-        await new Promise(r => setTimeout(r, 700));
-    }
-
-    window.location.href = "https://www.21vek.by/order/";
-}
+// переходим на 21vek и выполняем скрипт
+window.location.href = "https://www.21vek.by/#addkit=" + encodeURIComponent(buildScript(ids));
 </script>
 
 </body>
