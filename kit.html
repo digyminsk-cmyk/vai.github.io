@@ -6,11 +6,19 @@
 </head>
 <body>
 
-<h2>Собираем комплект...</h2>
+<h2>Комплект готов</h2>
+
+<button onclick="buildCart()" style="font-size:20px;padding:15px;">
+Добавить комплект в корзину
+</button>
 
 <script>
-const tg = window.Telegram?.WebApp;
-if (tg) tg.expand();
+function getIds() {
+    const params = new URLSearchParams(window.location.search);
+    const ids = params.get("ids");
+    if (!ids) return [];
+    return ids.split(",");
+}
 
 async function addToCart(id) {
     return fetch("https://gate.21vek.by/cart/carts/items", {
@@ -28,25 +36,16 @@ async function addToCart(id) {
     });
 }
 
-function getIds() {
-    const params = new URLSearchParams(window.location.search);
-    const ids = params.get("ids");
-    if (!ids) return [];
-    return ids.split(",");
-}
-
 async function buildCart() {
     const ids = getIds();
 
     for (let id of ids) {
         await addToCart(id);
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 700));
     }
 
     window.location.href = "https://www.21vek.by/order/";
 }
-
-buildCart();
 </script>
 
 </body>
