@@ -1,50 +1,26 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Kit Builder</title>
+<title>Комплект</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-<h2>Собираем комплект...</h2>
+<h2>Открываем корзину...</h2>
 
 <script>
-function getIds() {
+function getCartLink() {
     const params = new URLSearchParams(window.location.search);
-    const ids = params.get("ids");
-    if (!ids) return [];
-    return ids.split(",");
+    return params.get("cart");
 }
 
-function buildScript(ids){
-    return `
-    (async()=>{
-        const ids = "${ids}".split(",");
-        for(let id of ids){
-            await fetch("https://gate.21vek.by/cart/carts/items", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: Number(id),
-                    type: "product",
-                    count: 1
-                })
-            });
-            await new Promise(r => setTimeout(r, 500));
-        }
-        window.location.href = "https://www.21vek.by/order/";
-    })();
-    `;
+const link = getCartLink();
+
+if (link) {
+    window.location.href = link;
+} else {
+    document.body.innerHTML = "Ссылка на корзину не найдена";
 }
-
-const ids = getIds().join(",");
-
-// переходим на 21vek и выполняем скрипт
-window.location.href = "https://www.21vek.by/#addkit=" + encodeURIComponent(buildScript(ids));
 </script>
 
 </body>
