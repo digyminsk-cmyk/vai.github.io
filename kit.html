@@ -9,17 +9,17 @@
 <h2>Открываем корзину...</h2>
 
 <script>
-function getCartLink() {
+function getHash() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("cart");
+    return params.get("hash");
 }
 
-const link = getCartLink();
+const hash = getHash();
 
-if (link) {
-    window.location.href = link;
+if (hash) {
+    window.location.href = "https://www.vseinstrumenti.ru/cart/?sharingHash=" + hash;
 } else {
-    document.body.innerHTML = "Ссылка на корзину не найдена";
+    document.body.innerHTML = "Hash корзины не найден";
 }
 </script>
 
